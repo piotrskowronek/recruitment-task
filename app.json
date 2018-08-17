@@ -1,6 +1,7 @@
 {
   "name": "Python Recruitment task",
   "description": "Python Recruitment task",
+  "repository": "https://github.com/piotrskowronek/recruitment-task",
   "image": "netguru/recruitment-task",
   "keywords": ["python", "django" ],
   "addons": [ "heroku-postgresql" ],
