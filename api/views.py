@@ -3,5 +3,5 @@ from rest_framework.response import Response
 
 
 @api_view(['get'])
-def index():
+def index(request):
     return Response({'detail': 'ok'})
