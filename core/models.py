@@ -19,7 +19,7 @@ class Movie(models.Model):
     country = models.CharField(max_length=1000, null=True, blank=True)
     awards = models.CharField(max_length=1000, null=True, blank=True)
     poster = models.CharField(max_length=1000, null=True, blank=True)
-    ratings = JSONField()
+    ratings = JSONField(null=True, blank=True)
     metascore = models.CharField(max_length=1000, null=True, blank=True)
     imdbrating = models.CharField(max_length=1000, null=True, blank=True)
     imdbvotes = models.CharField(max_length=1000, null=True, blank=True)

@@ -10,17 +10,6 @@ class MovieTestCase(TestCase):
     def setUp(self):
         self.client = APIClient()
 
-    def test_empty_list(self):
-        """
-        Given we have an empty system
-        When we request API to list movies
-        Then we should have an empty list
-        """
-        response = self.client.get('/api/movies/')
-
-        self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.data['results'], [])
-
     def test_add_simple_movie(self):
         """
         Given we have an empty system
@@ -50,7 +39,7 @@ class MovieTestCase(TestCase):
     def test_add_movie_based_on_partial_phrase(self):
         """
         Given we have an empty system
-        When we request API to add new movie using only partial part of movie title
+        When we request API to add new movie using only part of movie title
         Then we should have added movie
         """
         response = self.client.post('/api/movies/', {'title': 'jac'})
@@ -65,8 +54,8 @@ class MovieTestCase(TestCase):
     def test_add_movie_two_times(self):
         """
         Given we have an empty system
-        When we request API to add new movie using only partial part of movie title
-        Then we should have added movie
+        When we request API to add new movie two times the same
+        Then we should have added movie once
         """
         response = self.client.post('/api/movies/', {'title': 'jackie'})
         self.assertEquals(response.status_code, 201)
@@ -87,5 +76,5 @@ class MovieTestCase(TestCase):
         Then we should have empty system
         """
         response = self.client.post('/api/movies/', {'title': 'non existing movie'})
-        self.assertEquals(response.status_code, 400)
+        self.assertEquals(response.status_code, 404)
         self.assertEquals(Movie.objects.count(), 0)

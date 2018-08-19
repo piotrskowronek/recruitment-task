@@ -46,10 +46,10 @@ class OMDbAPITestCase(TestCase):
                                                          'imdbVotes','imdbID','Type','DVD','BoxOffice','Production',
                                                          'Website','Response'])
 
-    def test_search_based_on_wider_phrase(self):
+    def test_search_based_on_longer_phrase(self):
         """
         Given we have an empty system
-        When we request OMDb API to search for a movie with a wider name than existing
+        When we request OMDb API to search for a movie with a longer name
         Then we should have movie details
         """
         response = requests.get(f'http://www.omdbapi.com/?t=jackie+brown&apikey={OMDB_API_KEY}')
@@ -68,7 +68,7 @@ class OMDbAPITestCase(TestCase):
         """
         Given we have an empty system
         When we request OMDb API to search for a movie title which occurs multiple times
-        Then we should have movie details, every time the same
+        Then we should have some movie details, every time the same
         """
         for _ in range(3):
             response = requests.get(f'http://www.omdbapi.com/?t=les+misérables&apikey={OMDB_API_KEY}')
