@@ -19,7 +19,7 @@ class MovieTestCase(TestCase):
         response = self.client.get('/api/movies/')
 
         self.assertEquals(response.status_code, 200)
-        self.assertEquals(response.data, [])
+        self.assertEquals(response.data['results'], [])
 
     def test_add_simple_movie(self):
         """

@@ -1,4 +1,4 @@
-from django.contrib.postgres.forms import JSONField
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
@@ -25,9 +25,12 @@ class Movie(models.Model):
     imdbvotes = models.CharField(max_length=1000, null=True, blank=True)
     type = models.CharField(max_length=1000, null=True, blank=True)
     dvd = models.CharField(max_length=1000, null=True, blank=True)
-    box_office = models.CharField(max_length=1000, null=True, blank=True)
+    boxoffice = models.CharField(max_length=1000, null=True, blank=True)
     production = models.CharField(max_length=1000, null=True, blank=True)
     website = models.CharField(max_length=1000, null=True, blank=True)
+
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)
 
     @classmethod
     def should_override(cls, title, year, imdbid, **kwargs):
@@ -40,3 +43,11 @@ class Movie(models.Model):
             models.Index(fields=['title', 'year']),
             models.Index(fields=['year']),
         ]
+
+
+class Comment(models.Model):
+    body = models.TextField()
+
+    movie = models.ForeignKey(Movie, related_name='comments', on_delete=models.CASCADE)
+    created_date = models.DateTimeField(auto_now_add=True)
+    modified_date = models.DateTimeField(auto_now=True)

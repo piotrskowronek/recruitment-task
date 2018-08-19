@@ -2,20 +2,30 @@ import requests
 from logging import getLogger
 
 from django.utils.text import slugify
+from django_filters.rest_framework import DjangoFilterBackend
 from requests import RequestException
-from rest_framework import viewsets, mixins, status
+from rest_framework import viewsets, mixins, status, filters
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
-from api.serializers import MovieSerializer, MovieAddSerializer, MovieAPISerializer
-from core.models import Movie
+from api.filters import MovieFilter
+from api.serializers import MovieSerializer, MovieAddSerializer, MovieAPISerializer, CommentSerializer
+from app.settings import OMDB_API_KEY
+from core.models import Movie, Comment
 
 log = getLogger(__name__)
 
 
 class MovieViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Movie.objects.all()
-    serializer_class = MovieSerializer
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter,)
+    filter_class = MovieFilter
+    ordering_fields = '__all__'
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return MovieAddSerializer
+        return MovieSerializer
 
     def create(self, request, *args, **kwargs):
         input_serializer = MovieAddSerializer(data=request.data)
@@ -60,11 +70,11 @@ class MovieViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.Gene
     def fetch_movie_details(self, search_query):
         log.info(f'Fetching data from omdbapi. Used search query: {search_query}')
         try:
-            response = requests.get(f'http://www.omdbapi.com/?t={search_query}&apikey=b69dd4ec')
+            response = requests.get(f'http://www.omdbapi.com/?t={search_query}&apikey={OMDB_API_KEY}')
         except RequestException as e:
             log.error(f'Encountered an error during fetching data from omdbapi for search query: {search_query}.')
             log.info('Retrying...')
-            response = requests.get(f'http://www.omdbapi.com/?t={search_query}&apikey=b69dd4ec')
+            response = requests.get(f'http://www.omdbapi.com/?t={search_query}&apikey={OMDB_API_KEY}')
         json = response.json()
         log.info(f'Fetched data. Response: {json}')
 
@@ -73,3 +83,11 @@ class MovieViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.Gene
     def transform_search_query_response(self, validated_data):
         mapping = {slugify(k): v for k, v in validated_data.items()}
         return mapping
+
+
+
+class CommentViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = ('movie',)

@@ -1,6 +1,8 @@
+import json
+
 from rest_framework import serializers
 
-from core.models import Movie
+from core.models import Movie, Comment
 
 
 class MovieAddSerializer(serializers.Serializer):
@@ -39,6 +41,14 @@ class MovieAPISerializer(serializers.Serializer):
 
 
 class MovieSerializer(serializers.ModelSerializer):
+    ratings = serializers.JSONField()
+
     class Meta:
         model = Movie
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Comment
         fields = '__all__'
